@@ -34,7 +34,8 @@ namespace BookStore.Controllers
             GetBookQuery query = new GetBookQuery(_context);
             try
             {
-                var book = query.FindBook(id);
+                query.Id = id;
+                var book = query.FindBook();
                 return Ok(book);
             }
             catch (Exception ex)
@@ -67,7 +68,8 @@ namespace BookStore.Controllers
             try
             {
                 bookCommand.model = updatebook;
-                bookCommand.UpdateBook(id);
+                bookCommand.Id = id;
+                bookCommand.UpdateBook();
             }
             catch (Exception ex )
             {
@@ -80,14 +82,17 @@ namespace BookStore.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteBook(int id)
         {
-            var book = _context.Books.SingleOrDefault(x => x.Id == id);
-            if(book is null)
+            try
             {
-                return BadRequest();
+                BookCommand bookCommand = new BookCommand(_context);
+                bookCommand.Id = id;
+                bookCommand.DeleteBook();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
-            _context.Books.Remove(book);
-            _context.SaveChanges();
             return Ok();
         }
     }

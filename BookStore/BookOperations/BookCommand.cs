@@ -11,6 +11,7 @@ namespace BookStore.BookOperations
     {
         private readonly BookStoreDbContext _context;
         public BookCommandViewModel model { get; set; }
+        public int Id { get; set; }
         public BookCommand(BookStoreDbContext dbContext)
         {
             _context = dbContext;
@@ -33,9 +34,9 @@ namespace BookStore.BookOperations
             _context.SaveChanges();
         }
 
-        public void UpdateBook(int id)
+        public void UpdateBook()
         {
-            var book = _context.Books.SingleOrDefault(x => x.Id == id);
+            var book = _context.Books.SingleOrDefault(x => x.Id == Id);
             if (book is null)
             {
                 throw new Exception("Kitap bulunamadı");

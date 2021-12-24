@@ -3,13 +3,13 @@ using BookStore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookStore.BookOperations
 {
     public class GetBookQuery
     {
         private readonly BookStoreDbContext _context;
+        public int Id { get; set; }
 
         public GetBookQuery(BookStoreDbContext dbContext)
         {
@@ -32,9 +32,9 @@ namespace BookStore.BookOperations
             return vm;
         }
 
-        public BookViewModel FindBook(int id)
+        public BookViewModel FindBook()
         {
-            var book = _context.Books.FirstOrDefault(x => x.Id == id);
+            var book = _context.Books.FirstOrDefault(x => x.Id == Id);
             if(book is null)
             {
                 throw new InvalidOperationException("Kitap bulunamadı");
