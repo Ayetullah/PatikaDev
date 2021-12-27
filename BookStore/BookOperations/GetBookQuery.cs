@@ -1,4 +1,5 @@
-﻿using BookStore.DBOperations;
+﻿using AutoMapper;
+using BookStore.DBOperations;
 using BookStore.Models;
 using System;
 using System.Collections.Generic;
@@ -9,26 +10,19 @@ namespace BookStore.BookOperations
     public class GetBookQuery
     {
         private readonly BookStoreDbContext _context;
+        private readonly IMapper _mapper;
         public int Id { get; set; }
 
-        public GetBookQuery(BookStoreDbContext dbContext)
+        public GetBookQuery(BookStoreDbContext dbContext, IMapper mapper)
         {
             _context = dbContext;
+            _mapper = mapper;
         }
 
         public List<BookViewModel> Handle()
         {
             var bookList = _context.Books.OrderBy(x => x.Id).ToList<Book>();
-            List<BookViewModel> vm = new List<BookViewModel>();
-            foreach (var item in bookList)
-            {
-                vm.Add(new BookViewModel() {
-                    Title = item.Title,
-                    PageCount = item.PageCount,
-                    Genre = ((GenreEnum)item.GenreId).ToString(),
-                    PublishDate  = item.PublishDate.Date.ToString("dd/MM/yyy")              
-                });
-            }
+            List<BookViewModel> vm = _mapper.Map<List<BookViewModel>>(bookList);
             return vm;
         }
 
@@ -40,11 +34,7 @@ namespace BookStore.BookOperations
                 throw new InvalidOperationException("Kitap bulunamadı");
             }
 
-            BookViewModel viewModel = new BookViewModel();
-            viewModel.Genre = ((GenreEnum) book.GenreId).ToString();
-            viewModel.Title = book.Title;
-            viewModel.PublishDate = book.PublishDate.Date.ToString("dd/MM/yyy");
-            viewModel.PageCount = book.PageCount;
+            var viewModel = _mapper.Map<BookViewModel>(book);
             return viewModel;
         }
     }
